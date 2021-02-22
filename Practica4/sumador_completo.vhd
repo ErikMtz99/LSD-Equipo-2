@@ -1,3 +1,6 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
 entity sumadorcompleto is
 Port(x,y,cin: in std_logic;
      cout,suma: out std_logic);
