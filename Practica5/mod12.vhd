@@ -9,7 +9,7 @@ end mod12;
 
 
 architecture arch of mod12 is
-component mod is
+component mods is
 port(
     clk, rst: in std_logic;
     qq: out std_logic_vector(3 downto 0));

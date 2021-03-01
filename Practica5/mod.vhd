@@ -1,13 +1,13 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity mod is
+entity mods is
 port(
     clk, rst: in std_logic;
     qq: out std_logic_vector(3 downto 0));
-end mod;
+end mods;
 
-architecture estructural of mod is
+architecture estructural of mods is
 component FlipflopJK is
 port(
     J,K: in  std_logic;
