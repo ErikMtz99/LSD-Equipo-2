@@ -28,16 +28,25 @@ port(
 end MOD12;
 
 architecture estructural of MOD12 is
-component MOD6 is
+component MOD10 is
 port(
     clk: in std_logic;
     S: out std_logic_vector(3 downto 0));
 end component;
 
+component FlipFlop is
+port  ( 
+    J,K: in  std_logic;
+    Reset: in std_logic;
+    Clock_enable: in std_logic;
+    Clock: in std_logic;
+    Output: out std_logic);
+end component;
+
 signal qaux : std_logic_vector(3 downto 0);
 
 begin
-Contador : MOD6 port map(clk => clk , S => qaux);
+Contador : MOD10 port map(clk => clk , S => qaux);
 S <= qaux;
 
 end estructural;
