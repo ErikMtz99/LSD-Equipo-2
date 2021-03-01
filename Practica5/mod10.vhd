@@ -1,15 +1,22 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-
-entity FlipflopJK is
-   port( J,K: in  std_logic;
-         Reset: in std_logic;
-         Clock_enable: in std_logic;
-         Clock: in std_logic;
-         Output: out std_logic);
-end FlipflopJK;
-
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 03/01/2021 04:33:49 PM
+-- Design Name: 
+-- Module Name: mod10 - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
@@ -30,10 +37,10 @@ end component;
 signal q1,q2,q3,q4, diez,andff3, andff4: std_logic;
 
 begin
-F1: FlipflopJK port map('1','1',diez,'1',clk,q1);
-F2: FlipflopJK port map('1','1',diez,'1',clk,q2);
-F3: FlipflopJK port map(andff3,andff3,diez,'1',clk,q3);
-F4: FlipflopJK port map(andff4,andff4,diez,'1',clk,q4);
+F1: FlipflopJK port map(J => '1', K => '1',Reset => diez, Clock_enable => '1', Clock => clk, Output=> q1);
+F2: FlipflopJK port map(J =>'1', K => '1', Reset => diez, Clock_enable => '1', Clock => clk, Output=> q2);
+F3: FlipflopJK port map(J => andff3, K => andff3, Reset => diez, Clock_enable =>  '1', Clock => clk, Output=> q3);
+F4: FlipflopJK port map(J =>andff4, K => andff4, Reset => diez, Clock_enable =>  '1', Clock => clk, Output=> q4);
 
 andff3 <= q1 and q2;
 andff4 <= andff3 and q3;

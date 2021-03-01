@@ -1,3 +1,24 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 03/01/2021 04:33:49 PM
+-- Design Name: 
+-- Module Name: mod12 - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -28,7 +49,7 @@ else
 end if;
 end process;
 
-Contador : mods port map(clk ,reset, qaux);
+Contador : mods port map(clk => clk , rst => reset, qq => qaux);
 q12 <= qaux;
 
 end arch;
