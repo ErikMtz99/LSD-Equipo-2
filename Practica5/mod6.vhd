@@ -1,4 +1,17 @@
-use IEEE.STD_LOGIC_ARITH.ALL;
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity FlipflopJK is
+   port( J,K: in  std_logic;
+         Reset: in std_logic;
+         Clock_enable: in std_logic;
+         Clock: in std_logic;
+         Output: out std_logic);
+end FlipflopJK;
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
 
 entity MOD6 is
 Port( clk: in std_logic;

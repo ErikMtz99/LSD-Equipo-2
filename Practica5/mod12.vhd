@@ -28,7 +28,7 @@ else
 end if;
 end process;
 
-Contador : mod port map(clk ,reset, qaux);
+Contador : mods port map(clk ,reset, qaux);
 q12 <= qaux;
 
 end arch;

@@ -1,6 +1,17 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
+entity FlipflopJK is
+   port( J,K: in  std_logic;
+         Reset: in std_logic;
+         Clock_enable: in std_logic;
+         Clock: in std_logic;
+         Output: out std_logic);
+end FlipflopJK;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
 entity mods is
 port(
     clk, rst: in std_logic;

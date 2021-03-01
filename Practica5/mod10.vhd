@@ -2,12 +2,24 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
+entity FlipflopJK is
+   port( J,K: in  std_logic;
+         Reset: in std_logic;
+         Clock_enable: in std_logic;
+         Clock: in std_logic;
+         Output: out std_logic);
+end FlipflopJK;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+
 entity MOD10 is
 Port( clk: in std_logic;
       S: out std_logic_vector(3 downto 0));
 end MOD10;
 
-architecture estructural of MOD6 is
+architecture estructural of MOD10 is
 component FlipflopJK is
    port( J,K: in  std_logic;
          Reset: in std_logic;
@@ -15,7 +27,7 @@ component FlipflopJK is
          Clock: in std_logic;
          Output: out std_logic);
 end component;
-signal q1,q2,q3,q4,diez,andff3, andff4: std_logic;
+signal q1,q2,q3,q4, diez,andff3, andff4: std_logic;
 
 begin
 F1: FlipflopJK port map('1','1',diez,'1',clk,q1);

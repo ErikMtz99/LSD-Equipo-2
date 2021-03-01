@@ -2,6 +2,26 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
+entity mod60 is 
+	port(CLK: in STD_LOGIC;
+	     F60 : OUT STD_LOGIC;
+	     q60: out STD_LOGIC_VECTOR (5 downto 0));
+end mod60;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+
+entity mod12 is
+port(
+    clk: in std_logic;
+    q12: out std_logic_vector(3 downto 0));
+end mod12;
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+
 entity reloj is 
 	port(CLKH: in STD_LOGIC;
 	     UM: out STD_LOGIC_VECTOR (2 downto 0);
@@ -11,8 +31,6 @@ entity reloj is
 end reloj;
 
 architecture behavioral of reloj is
-
-	
 	component mod12 is
 		port(clk: in STD_LOGIC;
 	   	     q12: out STD_LOGIC_VECTOR (3 downto 0));
@@ -32,8 +50,7 @@ signal Hour0,Hour1,Hour2,Hour3 : STD_LOGIC;
 begin
 
 
-MOD60_S : mod60
-	port map(CLKH, Flag_StoM, Seg5, Seg4, Seg3, Seg2, Seg1, Seg0);
+MOD60_S : mod60 port map(CLKH, Flag_StoM, Seg5, Seg4, Seg3, Seg2, Seg1, Seg0);
 
 
 MOD60_M : mod60
