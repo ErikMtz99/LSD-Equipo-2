@@ -10,8 +10,12 @@ end mod;
 architecture estructural of mod is
 component FlipflopJK is
 port(
-    j, k, rst, clk:in std_logic;
-    q: out std_logic);
+    J,K: in  std_logic;
+    Reset: in std_logic;
+    Clock_enable: in std_logic;
+    Clock: in std_logic;
+    Output: out std_logic
+    );
 end component;
 
 signal k,l,m:std_logic;
