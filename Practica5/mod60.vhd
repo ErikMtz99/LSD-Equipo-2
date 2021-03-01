@@ -2,31 +2,60 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
-entity MOD60BCD is
-Port( clk: in std_logic;
-      min_dec: out std_logic_vector(2 downto 0)
-      min_uni: out std_logic_vector(3 downto 0));
-end MOD60BCD;
+entity mod60 is 
+	port(CLK: in STD_LOGIC;
+	     F60 : OUT STD_LOGIC;
+	     q60: out STD_LOGIC_VECTOR (5 downto 0));
+end mod60;
 
-architecture estructural of MOD60BCD is
-component MOD10 is
-Port( clk: in std_logic;
-      S: out std_logic_vector(3 downto 0));
-end component;
-component MOD6 is
-Port( clk: in std_logic;
-      S: out std_logic_vector(2 downto 0));
-end component;
+architecture behavioral of mod60 is
 
-signal reset1: std_logic;
-signal Sa1: std_logic_vector(3 downto 0);
-signal Sa2: std_logic_vector(2 downto 0);
+	component MOD10 is
+		port(clk: in STD_LOGIC;
+	   	     S: out STD_LOGIC_VECTOR (3 downto 0));
+	end component;
+	
+	component MOD6 is 
+		port(clk: in STD_LOGIC;
+		     S: out STD_LOGIC_VECTOR (3 downto 0));
+	end component;
+
+signal salida07, salida06, salida05 ,salida04 ,salida03, salida02, salida01, salida00 : STD_LOGIC;
+signal trst : STD_LOGIC := '0';
+signal vcc : STD_LOGIC := '1';
+signal flag60 : STD_LOGIC := '0';
 
 begin
-MIN_U: MOD10 port map(clk,Sa1);
-MIN_D: MOD6 port map(reset1,Sa2);
-reset1 <= Sa1(0) and Sa1(1) and Sa1(3);
 
-min_dec <= Sa2;
-min_uni <= Sa1;
-end estructural;
+MOD10_1 : MOD10
+	port map(CLK, salida03, salida02, salida01, salida00);
+MOD6_1 : mod6
+	port map(trst, salida07, salida06, salida05, salida04);
+
+process(salida03)
+	begin
+		if (falling_edge(salida03)) then
+			trst <= '1';
+		else
+			trst <= '0';
+		end if;
+end process;
+
+process(salida06)
+	begin
+		if (falling_edge(salida06)) then
+			flag60 <= '1';
+		else
+			flag60 <= '0';
+		end if;
+end process;
+
+F60 <= FLAG60;
+q60(0) <= salida00;
+q60(1) <= salida01;
+q60(2) <= salida02;
+q60(3) <= salida03;
+q60(4) <= salida04;
+q60(5) <= salida05;
+
+end behavioral;
