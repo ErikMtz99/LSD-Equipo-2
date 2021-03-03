@@ -41,9 +41,9 @@ signal q1, q2, q3, q4 : std_logic_vector(3 downto 0);
 
 begin
 F1: FlipFlop port map (J => '1', K => '1', Reset => doce, Clock_enable => '1', Clock => clk, Output=> q1);
-F2: FlipFlop port map (J => '1', K => '1', Reset => doce, Clock_enable => '1', Clock => clk, Output=> q1);
-F3: FlipFlop port map (J => and1, K => and1, Reset => doce, Clock_enable => '1', Clock => clk, Output=> q1);
-F4: FlipFlop port map (J => and2 , K => and2 , Reset => doce, Clock_enable => '1', Clock => clk, Output=> q1);
+F2: FlipFlop port map (J => '1', K => '1', Reset => doce, Clock_enable => '1', Clock => clk, Output=> q2);
+F3: FlipFlop port map (J => and1, K => and1, Reset => doce, Clock_enable => '1', Clock => clk, Output=> q3);
+F4: FlipFlop port map (J => and2 , K => and2 , Reset => doce, Clock_enable => '1', Clock => clk, Output=> q4);
 
 and1 <= q1 and q2;
 and2 <= and1 and and2;
