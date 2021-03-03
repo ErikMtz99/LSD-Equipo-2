@@ -23,11 +23,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
 entity reloj is 
-	port(CLKH: in STD_LOGIC;
-	     UM: out STD_LOGIC_VECTOR (2 downto 0);
-         DM: out STD_LOGIC_VECTOR (2 downto 0);
-	     UH: out STD_LOGIC_VECTOR (1 downto 0);
-         DH: out STD_LOGIC_VECTOR (1 downto 0));
+	port(
+	clk_in: in std_logic;
+	hrs_dec: out std_logic;
+	hrs_uni: out std_logic_vector(3 downto 0);
+	min_dec: out std_logic_vector(2 downto 0);
+	min_uni: out std_logic_vector(3 downto 0);
+	seg_dec: out std_logic_vector(2 downto 0);
+	seg_uni: out std_logic_vector(3 downto 0) );
 end reloj;
 
 architecture behavioral of reloj is
@@ -44,36 +47,7 @@ architecture behavioral of reloj is
 	end component;
 			
 
-signal Seg0, Seg1, Seg2, Seg3, Seg4, Seg5, Flag_StoM, Clock : STD_LOGIC;
-signal Min0, Min1, Min2, Min3, Min4, Min5, Flag_MtoH: STD_LOGIC;
-signal Hour0,Hour1,Hour2,Hour3 : STD_LOGIC;
+
 begin
-
-
-MOD60_S : mod60 port map(clk => CLKH, F60 => Flag_StoM, q60(5) => Seg5, q60(4) =>Seg4, q60(3) =>Seg3, q60(2) => Seg2, q60(1) => Seg1, q60(0) => Seg0);
-
-
-MOD60_M : mod60
-	port map(CLK => Flag_StoM, F60 =>Flag_MtoH, q60(5)=>Min5,q60(4)=>Min4,q60(3)=>Min3,q60(2)=>Min2,q60(1)=>Min1,q60(0)=>Min0);
-
-
-MOD12_H : mod12
-	port map(clk => Flag_MtoH, q12(3) => Hour3, q12(2) => Hour2, q12(1) =>Hour1 , q12(0) =>Hour0);
-
-
-
-UM(0) <= Min0;
-UM(1) <= Min1;
-UM(2) <= Min2;
-
-DM(0) <= Min3;
-DM(1) <= Min4;
-DM(2) <= Min5;
-
-UH(0) <= Hour0;
-UH(1) <= Hour1;
-
-DH(0) <= Hour2;
-DH(1) <= Hour3;
 
 end behavioral;
