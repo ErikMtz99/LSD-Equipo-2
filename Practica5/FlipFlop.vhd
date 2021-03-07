@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 03/01/2021 04:33:49 PM
+-- Create Date: 
 -- Design Name: 
--- Module Name: FlipFlop - Behavioral
+-- Module Name: 
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -18,40 +18,37 @@
 -- 
 ----------------------------------------------------------------------------------
 
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
 
-entity FlipflopJK is
-   port( J,K: in  std_logic;
-         Reset: in std_logic;
-         Clock_enable: in std_logic;
-         Clock: in std_logic;
-         Output: out std_logic);
-end FlipflopJK;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
 
-architecture Behavioral of FlipflopJK is
-signal temp: std_logic;
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
 
+entity FFJK is
+    Port ( J : in bit;
+           K : in bit;
+           resetN : in bit;
+           setN : in bit;
+           clk : in bit;
+           Q : out bit);
+end FFJK;
+
+architecture Behavioral of FFJK is
+signal q_i: bit;
 begin
-   process (Clock) 
-   begin
-      if rising_edge(Clock) then                 
-         if Reset='1' then   
-            temp <= '0';
-         elsif Clock_enable ='1' then
-            if (J='0' and K='0') then
-               temp <= temp;
-            elsif (J='0' and K='1') then
-               temp <= '0';
-            elsif (J='1' and K='0') then
-               temp <= '1';
-            elsif (J='1' and K='1') then
-               temp <= not (temp);
-            end if;
-         end if;
-      end if;
-   end process;
-   Output <= temp;
+    Q <= q_i;
+    process(clk, resetN, setN)
+    begin
+        if resetN = '0' then q_i <= '0';
+        elsif setN = '0' then q_i <= '1';
+        elsif clk'event and clk = '1' then 
+            q_i  <= (J and not q_i) or (not K and q_i);
+        end if;
+    end process;
 end Behavioral;

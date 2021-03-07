@@ -1,33 +1,52 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:
+-- Design Name: 
+-- Module Name: 
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
 
-entity MOD60BCD is
-Port( clk: in std_logic;
-      min_dec: out std_logic_vector(2 downto 0)
-      min_uni: out std_logic_vector(3 downto 0));
-end MOD60BCD;
+entity CounterSecMOD60 is
+    Port ( clk: in bit;
+          seg_uni: out bit_vector(3 downto 0);
+          seg_dec: out bit_vector(2 downto 0));
+end CounterSecMOD60;
 
-architecture estructural of MOD60BCD is
-component MOD10 is
-Port( clk: in std_logic;
-      S: out std_logic_vector(3 downto 0));
-end component;
-
-component MOD6 is
-Port( clk: in std_logic;
-      S: out std_logic_vector(2 downto 0));
-end component;
-
-signal reset1: std_logic;
-signal Sa1: std_logic_vector(3 downto 0);
-signal Sa2: std_logic_vector(2 downto 0);
+architecture Behavioral of CounterSecMOD60 is
+    component CounterMOD10
+        Port(clk: in bit;
+            output: out bit_vector(3 downto 0));
+    end component;
+    
+    component CounterMOD6
+        Port(clk: in bit;
+            output: out bit_vector(2 downto 0));
+    end component;
+    
+signal inputM6: bit;
+signal setN, resetN: bit := '1';
+signal Qout6: bit_vector(2 downto 0);
+signal Qout10: bit_vector(3 downto 0);
 
 begin
-MIN_U: MOD10 port map(clk,Sa1);
-MIN_D: MOD6 port map(reset1,Sa2);
-reset1 <= Sa1(0) and Sa1(1) and Sa1(3);
-
-min_dec <= Sa2;
-min_uni <= Sa1;
-end estructural;
+    seg_uni <= Qout10;
+    seg_dec <= Qout6;
+    inputM6 <= Qout10(3) and Qout10(1);
+    CM10: CounterMOD10 port map(clk, Qout10);
+    CM6:  CounterMOD6  port map(inputM6, Qout6);
+end Behavioral;

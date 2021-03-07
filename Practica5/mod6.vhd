@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 03/01/2021 04:33:49 PM
+-- Create Date:
 -- Design Name: 
--- Module Name: mod6 - Behavioral
+-- Module Name: 
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -17,32 +17,31 @@
 -- Additional Comments:
 -- 
 ----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity MOD6 is
-Port( clk: in std_logic;
-      S: out std_logic_vector(2 downto 0));
-end MOD6;
+entity CounterMOD6 is
+    Port(clk: in bit;
+        output: out bit_vector(2 downto 0));
+end CounterMOD6;
 
-architecture estructural of MOD6 is
-component FlipflopJK is
-   port( J,K: in  std_logic;
-         Reset: in std_logic;
-         Clock_enable: in std_logic;
-         Clock: in std_logic;
-         Output: out std_logic);
-end component;
-signal q1,q2,q3,seis,andff3: std_logic;
-
+architecture Behavioral of CounterMOD6 is
+    component FFJK
+        Port(J, K, resetN, setN, clk: in bit;
+            Q: out bit
+        );
+    end component;
+    
+signal setN, resetN,q1, q2, q3, inq3: bit;
 begin
-F1: FlipflopJK port map(J => '1',K => '1', Reset => seis, Clock_enable => '1', Clock => clk, Output => q1);
-F2: FlipflopJK port map(J => '1', K => '1', Reset => seis, Clock_enable => '1', Clock => clk, Output => q2);
-F3: FlipflopJK port map(J => andff3, K => andff3, Reset => seis, Clock_enable => '1', Clock => clk, Output => q3);
+setN <= '1';
+resetN <= '0' when q3 & q2 & q1 = "110" else '1';
+inq3 <= q1 and q2;
+output <= q3 & q2 & q1;
 
-andff3 <= q1 and q2;
-seis <= q2 and q3;
-S(0) <= q1;
-S(1) <= q2;
-S(2) <= q3;
-end estructural;
+FFJK1: FFJK port map('1', '1', resetN, setN, clk, q1);
+FFJK2: FFJK port map(q1, q1, resetN, setN, clk, q2);
+FFJK3: FFJK port map(inq3, inq3, resetN, setN, clk, q3);
+
+end Behavioral;
