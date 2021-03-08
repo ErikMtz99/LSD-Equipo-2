@@ -46,6 +46,14 @@ architecture Behavioral of Reloj is
             seg_uni: out bit_vector(3 downto 0);
             seg_dec: out bit_vector(2 downto 0));
     end component;
+    
+    
+    component seg7m
+        Port(ck : in  std_logic;                          -- 100MHz system clock
+             number : in  std_logic_vector (63 downto 0); -- eight digit number to be displayed
+             seg : out  std_logic_vector (7 downto 0);    -- display cathodes
+             an : out  std_logic_vector (7 downto 0));    -- display anodes (active-low, due to transistor complementing));
+    end component;
 
 signal startHrsCounter: bit;
 signal internal_min_dec, internal_sec_dec: bit_vector(2 downto 0);
