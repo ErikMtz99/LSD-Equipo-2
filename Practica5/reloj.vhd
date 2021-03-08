@@ -28,6 +28,41 @@ entity Reloj is
             min_dec, seg_dec: out bit_vector(2 downto 0));
 end Reloj;
 
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity decoder7 is
+Port(
+        Clk: in std_logic;
+        N1: in std_logic_vector(3 downto 0);
+        S82: out std_logic_vector(7 downto 0)
+);
+end decoder7;
+
+architecture Behavioral of decoder7 is
+
+begin
+Process(Clk)
+begin
+ 
+-- pasa valor de 4 bits a su equivalente para display de 7 segmentos
+case (N1) is
+                    when "0000" => S82 <= "11000000";
+                    when "0001" => S82 <= "11111001";
+                    when "0010" => S82 <= "10100100";
+                    when "0011" => S82 <= "10110000";
+                    when "0100" => S82 <= "10011001";
+                    when "0101" => S82 <= "10010010";
+                    when "0110" => S82 <= "10000010";
+                    when "0111" => S82 <= "11111000";
+                    when "1000" => S82 <= "10000000";
+                    when "1001" => S82 <= "10010000";
+                    when others => S82 <= "11111111";
+                    end case;
+end process;
+end Behavioral;
+
+
 architecture Behavioral of Reloj is
     component CounterMOD12
         Port(clk: in bit;
@@ -47,6 +82,12 @@ architecture Behavioral of Reloj is
             seg_dec: out bit_vector(2 downto 0));
     end component;
     
+    component decoder7
+        Port( Clk: in std_logic;
+              N1: in std_logic_vector(3 downto 0);
+              S82: out std_logic_vector(7 downto 0)
+            );
+    end component;
     
     component seg7m
         Port(ck : in  std_logic;                          -- 100MHz system clock
@@ -58,6 +99,7 @@ architecture Behavioral of Reloj is
 signal startHrsCounter: bit;
 signal internal_min_dec, internal_sec_dec: bit_vector(2 downto 0);
 signal internal_min_uni, internal_sec_uni: bit_vector(3 downto 0);
+signal min_dec_disp, min_disp: bit_vector (7 downto 0);
 
 begin
     process(clk_in)
@@ -74,4 +116,6 @@ begin
     CSM60: CounterSecMOD60 port map (clk_in, internal_sec_uni, internal_sec_dec);
     CMM60: CounterMinMOD60 port map (clk_in, internal_min_uni, internal_min_dec);
     CHM12: CounterMOD12 port map (startHrsCounter, hrs_uni, hrs_dec);
+    
+    -- DISP: decoder7 port map (clk_in, internal_min_dec, min_dec_disp);
 end Behavioral;
