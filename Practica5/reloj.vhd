@@ -63,6 +63,8 @@ end component;
     end component;
 
 signal startHrsCounter: bit;
+signal clk_divisor: integer := 0;
+-- signal clk_in2: bit  
 signal internal_min_dec, internal_sec_dec: bit_vector(2 downto 0);
 signal internal_min_uni, internal_sec_uni: bit_vector(3 downto 0);
 signal min_dec_disp, min_uni_disp, hrs_uni_disp, hrs_dec_disp: bit_vector (7 downto 0);
@@ -71,34 +73,42 @@ signal contador: integer:= 0;
 signal clk1hz: bit:='0';
 signal hrs_dec: bit;
 signal hrs_uni : bit_vector(3 downto 0); 
-signal min_uni, seg_uni: bit_vector(3 downto 0);
-signal min_dec, seg_dec: bit_vector(2 downto 0);
 signal D7A : BIT_VECTOR (7 downto 0);
 signal D71 : BIT_VECTOR (7 downto 0);
 --------
--- signal watch: std_logic;
-signal d7s : bit_VECTOR (63 downto 0):= "1111111111111111111111111111111100000000000000000000000000000000";
+
+signal d7s : bit_VECTOR (63 downto 0):= "0000100101000000010001110000100000000000000000000000000000000000";
+-- signal d7s : bit_VECTOR (63 downto 0):= "0000001100000011000000110000001100000000000000000000000000000000";
+-- signal d7s : bit_VECTOR (63 downto 0):= "1111111111111111111111111111111100000000000000000000000000000000";
 
 
 begin
     process(clk_in)
     begin
-        if CLK_IN'event and clk_in = '1' then
-        if(contador = 49999999) then 
+        if clk_in'event and clk_in = '1' then
+         if(contador = 99999999) then 
                contador <= 0;
                clk1hz <= not clk1hz; -- para que fluctue la señal
            else
-               contador <= contador + 1;
-           end if;
-           
-            startHrsCounter<=   internal_min_dec(2) and internal_min_dec(0) and internal_min_uni(3) and internal_min_uni(0) and 
-                                internal_sec_dec(2) and internal_sec_dec(0) and internal_sec_uni(3) and internal_sec_uni(0); 
+                contador <= contador + 1;
+            end if;
+            else null;
+        -- divisor: if clk_divisor <= 50000000 then
+        --wait until clk_input'event and clk_input = '1';
+       -- clk_divisor <= clk_divisor + 1;
+        -- if clk_divisor = 100000000 then
+        --    clk_in <= '1';
+        --    clk_divisor <= 0;
+        -- else
+        --    clk_in <= '0';
+        -- end if;   
         end if;
-    end process;    
-    seg_uni <= internal_sec_uni;
-    seg_dec <= internal_sec_dec;
-    min_uni <= internal_min_uni;
-    min_dec <= internal_min_dec;
+        
+         startHrsCounter<=   internal_min_dec(2) and internal_min_dec(0) and internal_min_uni(3) and internal_min_uni(0) and 
+                                       internal_sec_dec(2) and internal_sec_dec(0) and internal_sec_uni(3) and internal_sec_uni(0); 
+   
+    end process;
+
     CSM60: CounterSecMOD60 port map (clk1hz, internal_sec_uni, internal_sec_dec);
     CMM60: CounterMinMOD60 port map (clk1hz, internal_min_uni, internal_min_dec);
     CHM12: CounterMOD12 port map (startHrsCounter, hrs_uni, hrs_dec);
@@ -106,17 +116,21 @@ begin
     horas <= "000" & hrs_dec;
     minutos <=  '0' & internal_min_dec;
  
-DISP: decoder7 port map (clk1hz, minutos, min_dec_disp);
-DISP2: decoder7 port map (clk1hz, internal_min_uni, min_uni_disp);
-DISP3: decoder7 port map (clk1hz, hrs_uni, hrs_uni_disp);
-DISP4: decoder7 port map (clk1hz, horas, hrs_dec_disp);
+-- DISP: decoder7 port map (clk1hz, minutos, min_dec_disp);
+-- DISP2: decoder7 port map (clk1hz, internal_min_uni, min_uni_disp);
+-- DISP3: decoder7 port map (clk1hz, hrs_uni, hrs_uni_disp);
+-- DISP4: decoder7 port map (clk1hz, horas, hrs_dec_disp);
 
-SEGMENTOS : segm7 port map (ck => clk1hz, number => d7s, seg => seg7d, an => an7d);
-   -- watch <= to_std_logic(clk_in);
-   d7s(7 downto 0) <= min_uni_disp;
-   d7s(15 downto 8) <= min_dec_disp;
-   d7s(23 downto 16) <= hrs_uni_disp;
-   d7s(31 downto 24) <= hrs_dec_disp;
+DISP1: decoder7 port map (clk1hz, internal_min_uni, d7s(7 downto 0));
+DISP2: decoder7 port map (clk1hz, minutos, d7s(15 downto 8));
+DISP3: decoder7 port map (clk1hz, hrs_uni, d7s(23 downto 16));
+DISP4: decoder7 port map (clk1hz, horas, d7s(31 downto 24));
+
+SEGMENTOS : segm7 port map (ck => clk_in, number => d7s, seg => seg7d, an => an7d); 
+   -- d7s(7 downto 0) <= min_uni_disp;
+   -- d7s(15 downto 8) <= min_dec_disp;
+   -- d7s(23 downto 16) <= hrs_uni_disp;
+   -- d7s(31 downto 24) <= hrs_dec_disp;
 --   Prueba: segm7 port map(clk1hz, d7s, D7A, D71);
    
 end Behavioral;
