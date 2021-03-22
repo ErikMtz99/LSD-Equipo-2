@@ -21,8 +21,12 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+<<<<<<< HEAD
 use IEEE.NUMERIC_STD.all;
 
+=======
+use ieee.numeric_std.all;
+>>>>>>> 9493df9281e4baea5dc6f5a4703f18461f25d639
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -44,12 +48,19 @@ end main;
 
 architecture Behavioral of main is
 --senales
-signal suma, resta, mult : std_logic_vector(3 downto 0);
+signal suma, resta: signed(3 downto 0);
+signal mult : unsigned(3 downto 0);
 begin
 
 Selector: process(opselect, opA, opB)
 begin
-
+if (opselect = "001") then 
+suma <= signed(opA) + signed(opB);
+elsif(opselect = "010") then
+resta <= signed(opA) - signed(opB);
+elsif(opselect = "100") then
+mult <= unsigned(opA) * unsigned(opB);
+end if;  
 end process;
 
 end Behavioral;
