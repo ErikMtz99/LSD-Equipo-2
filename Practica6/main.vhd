@@ -21,12 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-<<<<<<< HEAD
-use IEEE.NUMERIC_STD.all;
-
-=======
 use ieee.numeric_std.all;
->>>>>>> 9493df9281e4baea5dc6f5a4703f18461f25d639
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
