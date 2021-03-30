@@ -1,0 +1,108 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity PmodK is
+    Port ( 
+		   clk : in  STD_LOGIC;
+		   JA : inout  STD_LOGIC_VECTOR (7 downto 0) -- PmodK is designed to be connected to JA
+           -- an : out  STD_LOGIC_VECTOR (3 downto 0);   -- Controls which position of the seven segment display to display
+           -- seg : out  STD_LOGIC_VECTOR (6 downto 0)    -- digit to display on the seven segment display 
+           );
+end PmodK;
+
+architecture Behavioral of PmodK is
+component decoderk is
+	Port (
+		  clk : in  STD_LOGIC;
+          Row : in  STD_LOGIC_VECTOR (3 downto 0);
+		  Col : out  STD_LOGIC_VECTOR (3 downto 0);
+          DecodeOut : out  STD_LOGIC_VECTOR (3 downto 0));
+	end component;
+	
+component decoder7 is
+    Port(
+            Clk: in std_logic;
+            N1: in std_logic_vector(3 downto 0);
+            S82: out std_logic_vector(7 downto 0)
+    );
+    end component;
+    
+signal Decode, Decode2, Decode3, Decode4: STD_LOGIC_VECTOR (3 downto 0);
+signal suma, resta, mult: std_logic_vector(3 downto 0);
+signal operacion: std_logic_vector(3 downto 0);
+
+signal numero: std_logic_vector(63 downto 0);
+signal disp0, disp1, disp2, disp3, disp4, disp5: std_logic_vector(3 downto 0);
+signal x: std_logic;
+signal var: integer:= 0;
+begin
+
+Picar: process(clk, Decode, var)
+begin
+if(clk = '1') and clk'event then
+    if (var = 0) then
+        if(Decode = "1110") or (Decode = "1010") then
+                disp0 <= Decode;
+                var <= 1;
+                elsif (Decode = "1100") or (Decode = "1101") then
+                var <= 0;
+                else
+                disp1 <= Decode;
+                var <= 2;
+                end if;
+                
+    elsif (var = 1) then
+        disp1 <= Decode;
+        var <= 2;
+        
+    elsif (var = 2) then
+        disp2 <= Decode;
+        var <= 3;
+
+    elsif (var = 3) then
+        disp3 <= Decode;
+        var <= 4;
+
+    elsif (var = 4) then
+       if (Decode = "1101") then -- si se presiona el boton de igual
+            if (disp0 = "1110") then -- si el primer num es negativo
+                   if (disp2 = "1010") then 
+                   operacion <= signed(disp1 * "1111")  + signed(disp3);
+                   elsif(disp2 = "1011") then
+                   operacion <= signed(disp1 * "1111") - signed(disp3);
+                   elsif(disp2 = "1100") then
+                   operacion <= signed(disp1 * "1111") * signed(disp3);
+                   end if; 
+            else
+                   if (disp2 = "1010") then 
+                   operacion <= signed(disp1)  + signed(disp3);
+                   elsif(disp2 = "1011") then
+                   operacion <= signed(disp1) - signed(disp3);
+                   elsif(disp2 = "1100") then
+                   operacion <= signed(disp1) * signed(disp3);
+                   end if; 
+            end if;
+
+       end if;
+    end if;
+end if;
+end process;
+
+disp4 <= "1101"; --Valor del signo de igual
+
+
+Decoder1: decoder7 port map (clk, disp0, numero(63 downto 56));
+Decoder2: decoder7 port map (clk, disp1, numero(55 downto 48));
+Decoder3: decoder7 port map (clk, disp2, numero(47 downto 40));
+Decoder4: decoder7 port map (clk, disp3, numero(39 downto 32));
+
+Decoder5: decoder7 port map (clk, disp4, numero(31 downto 24));
+
+Decoder6: decoder7 port map (clk, disp5, numero(23 downto 16));
+    
+C0: decoderk port map (clk=>clk, Row =>JA(7 downto 4), Col=>JA(3 downto 0), DecodeOut=> Decode);
+
+
+end Behavioral;
