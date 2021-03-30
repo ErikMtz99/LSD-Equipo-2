@@ -8,11 +8,13 @@ entity decoderk is
 		clk : in  STD_LOGIC;
         Row : in  STD_LOGIC_VECTOR (3 downto 0);
 		Col : out  STD_LOGIC_VECTOR (3 downto 0);
-        DecodeOut : out  STD_LOGIC_VECTOR (3 downto 0));
+        DecodeOut : out  STD_LOGIC_VECTOR (3 downto 0);
+        contador: out  STD_LOGIC_VECTOR (3 downto 0));
 end decoderk;
 
 architecture Behavioral of decoderk is
 signal sclk :STD_LOGIC_VECTOR(19 downto 0);
+signal cont :STD_LOGIC_VECTOR(19 downto 0);
 begin
 	process(clk)
 		begin 
@@ -27,15 +29,19 @@ begin
 				--R1
 				if Row = "0111" then
 					DecodeOut <= "0001";	--1
+					cont <= cont + '1';
 				--R2
 				elsif Row = "1011" then
 					DecodeOut <= "0100"; --4
+					cont <= cont + '1';
 				--R3
 				elsif Row = "1101" then
 					DecodeOut <= "0111"; --7
+					cont <= cont + '1';
 				--R4
 				elsif Row = "1110" then
-					DecodeOut <= "0000"; --0
+					DecodeOut <= "0000"; --0 borrar un digito
+					cont <= cont - '1';
 				end if;
 				sclk <= sclk+1;
 			-- 2ms
@@ -48,15 +54,19 @@ begin
 				--R1
 				if Row = "0111" then		
 					DecodeOut <= "0010"; --2
+					cont <= cont + '1';
 				--R2
 				elsif Row = "1011" then
 					DecodeOut <= "0101"; --5
+					cont <= cont + '1';
 				--R3
 				elsif Row = "1101" then
 					DecodeOut <= "1000"; --8
+					cont <= cont + '1';
 				--R4
 				elsif Row = "1110" then
-					DecodeOut <= "1111"; --F
+					DecodeOut <= "1111"; --F cero
+					cont <= cont + '1';
 				end if;
 				sclk <= sclk+1;	
 			--3ms
@@ -69,15 +79,19 @@ begin
 				--R1
 				if Row = "0111" then
 					DecodeOut <= "0011"; --3	
+					cont <= cont + '1';
 				--R2
 				elsif Row = "1011" then
 					DecodeOut <= "0110"; --6
+					cont <= cont + '1';
 				--R3
 				elsif Row = "1101" then
 					DecodeOut <= "1001"; --9
+					cont <= cont + '1';
 				--R4
 				elsif Row = "1110" then
-					DecodeOut <= "1110"; --E
+					DecodeOut <= "1110"; --E signo menos
+					cont <= cont + '1';
 				end if;
 				sclk <= sclk+1;
 			--4ms
@@ -89,16 +103,20 @@ begin
 			elsif sclk = "01100001101010001000" then 
 				--R1
 				if Row = "0111" then
-					DecodeOut <= "1010"; --A
+					DecodeOut <= "1010"; --A +
+					cont <= cont + '1';
 				--R2
 				elsif Row = "1011" then
-					DecodeOut <= "1011"; --B
+					DecodeOut <= "1011"; --B -
+					cont <= cont + '1';
 				--R3
 				elsif Row = "1101" then
-					DecodeOut <= "1100"; --C
+					DecodeOut <= "1100"; --C *
+					cont <= cont + '1';
 				--R4
 				elsif Row = "1110" then
-					DecodeOut <= "1101"; --D
+					DecodeOut <= "1101"; --D =
+					cont <= cont + '1';
 				end if;
 				sclk <= "00000000000000000000";	
 			else
@@ -106,6 +124,7 @@ begin
 			end if;
 		end if;
 	end process;
+	
+contador <= cont;	
 						 
 end Behavioral;
-
