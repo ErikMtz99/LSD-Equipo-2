@@ -6,9 +6,9 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity PmodK is
     Port ( 
 		   clk : in  STD_LOGIC;
-		   JA : inout  STD_LOGIC_VECTOR (7 downto 0) -- PmodK is designed to be connected to JA
-           -- an : out  STD_LOGIC_VECTOR (3 downto 0);   -- Controls which position of the seven segment display to display
-           -- seg : out  STD_LOGIC_VECTOR (6 downto 0)    -- digit to display on the seven segment display 
+		   JA : inout  STD_LOGIC_VECTOR (7 downto 0); -- PmodK is designed to be connected to JA
+           an7 : out  STD_LOGIC_VECTOR (7 downto 0);   -- Controls which position of the seven segment display to display
+           seg7 : out  STD_LOGIC_VECTOR (7 downto 0)    -- digit to display on the seven segment display 
            );
 end PmodK;
 
@@ -18,7 +18,8 @@ component decoderk is
 		  clk : in  STD_LOGIC;
           Row : in  STD_LOGIC_VECTOR (3 downto 0);
 		  Col : out  STD_LOGIC_VECTOR (3 downto 0);
-          DecodeOut : out  STD_LOGIC_VECTOR (3 downto 0));
+          DecodeOut : out  STD_LOGIC_VECTOR (3 downto 0);
+          contador: out  STD_LOGIC_VECTOR (3 downto 0));
 	end component;
 	
 component decoder7 is
@@ -29,69 +30,121 @@ component decoder7 is
     );
     end component;
     
+component segm7 is
+        Port(ck : in std_logic;                          -- 100MHz system clock
+                number : in  std_logic_vector (63 downto 0); -- eight digit number to be displayed
+                seg : out  std_logic_vector (7 downto 0);    -- display cathodes
+                an : out  std_logic_vector (7 downto 0));    -- display anodes (active-low, due to transistor complementing)
+    end component;  
+      
 signal Decode, Decode2, Decode3, Decode4: STD_LOGIC_VECTOR (3 downto 0);
-signal suma, resta: std_logic_vector(3 downto 0);
-signal mult : std_logic_vector(7 downto 0);
+signal suma, resta, mult: std_logic_vector(3 downto 0);
+signal operacion: std_logic_vector(3 downto 0);
 
-signal numero: std_logic_vector(64 downto 0);
-signal valor1, valor2, valor3, valor4, valor5: std_logic_vector(3 downto 0);
-signal x: std_logic;
+signal numero: std_logic_vector(63 downto 0);
+signal disp1, disp2, disp3, disp4, disp5, disp6, disp7, disp8: std_logic_vector(3 downto 0);
+signal bandera: integer:= 0;
+signal operando: integer:= 0;
+signal signo: integer:= 0;
+signal cont: std_logic_vector(3 downto 0);
+signal digito1, digito2: std_logic_vector(3 downto 0);
+
 begin
 
-Picar1: process(Decode)
+Picar: process(clk, Decode)
 begin
-if(Decode = "1110") or (Decode = "1010") then
-valor1 <= Decode;
-x <= '0';
-elsif (Decode = "1100") or (Decode = "1101") then
-valor1 <= "0000";
-x <= '1';
-else
-valor1 <= "0000";
-valor2 <= Decode;
-x <= '1';
-end if;
+case(cont) is 
+   when "0001" => 
+        case(Decode) is
+            when "1110" => bandera <= 1;
+            when others => bandera <= 0; digito1 <= Decode;
+        end case;
+        
+    when "0010" =>
+        if (bandera = 0) then
+            if (Decode = "1010") then
+                operando <= 1; -- suma
+            elsif (Decode = "1010") then
+                operando <= 2; -- resta
+            elsif (Decode = "1010") then
+                operando <= 3; -- multiplicacion
+            end if;
+        else 
+            digito1 <= NOT(Decode) + 1 ;
+        end if;
+        
+    when "0011" =>
+        if (bandera = 0) then
+                digito2 <= Decode;
+            else 
+               if (Decode = "1010") then
+                    operando <= 1; -- suma
+               elsif (Decode = "1010") then
+                    operando <= 2; -- resta
+               elsif (Decode = "1010") then
+                    operando <= 3; -- multiplicacion
+               end if;
+            end if;
+    when "0100" =>
+        if (bandera = 0) then
+                   if (Decode = "1101") then
+                        cont  <= "0000";
+                        if (operando = 1) then 
+                            operacion <= signed(disp1)  + signed(disp3);
+                        elsif(operando = 2) then
+                            operacion <= signed(disp1) - signed(disp3);
+                        elsif(operando = 3) then
+                            operacion <= signed(disp1) * signed(disp3);
+                        end if; 
+                  end if; 
+       else
+            digito2 <= Decode;
+       end if;
+       
+     when "0101" =>  
+        if (bandera = 1) then
+            if (Decode = "1101") then
+                                cont  <= "0000";
+                                if (operando = 1) then 
+                                    operacion <= signed(disp1)  + signed(disp3);
+                                elsif(operando = 2) then
+                                    operacion <= signed(disp1) - signed(disp3);
+                                elsif(operando = 3) then
+                                    operacion <= signed(disp1) * signed(disp3);
+                                end if; 
+           end if;
+        end if;
+end case;
 end process;
 
-Picar2: process(Decode2)
-begin
-if (x <= '0') then
-valor2 <= Decode2;
-valor3 <= Decode3;
-valor4 <= Decode4;
-elsif (x <='1') then
-valor3 <= Decode2;
-valor4 <= Decode3;
-valor5 <= Decode4;
-end if;
-end process;
+numero(63 downto 56) <= "10111111" when bandera <= 1 else "11111111"; -- Primer display de izq a derecha
 
-Operacion: process(Decode3)
-begin
---if (Decode3 = "1010") then 
---suma <= std_logic_vector(signed(Decode) + signed(Decode));
---elsif(Decode3 = "1011") then
---resta <= std_logic_vector(signed(opA) - signed(opB));
---elsif(Decode3 = "1100") then
---mult <= std_logic_vector(signed(opA) * signed(opB));
---end if;  
-end process;
+disp2 <= digito1 when bandera <= 0 else NOT(digito1) + 1;
+Decoder2: decoder7 port map (clk, disp2, numero(55 downto 48)); -- Primer digito
 
-valor5 <= "1101"; --Valor del signo de igual
+numero(47 downto 40) <= "10000110" when operando <= 1 -- Suma (E)
+                   else "10111111" when operando <= 2 -- Resta
+                   else "10001110" when operando <= 3; -- Mult (F) 
+disp4 <= digito2;
+Decoder4: decoder7 port map (clk, disp4, numero(39 downto 32));  -- Segundo digito
 
-Decoder1: decoder7 port map (clk, valor1, numero(64 downto 57));
-Decoder2: decoder7 port map (clk, valor2, numero(57 downto 49));
-Decoder3: decoder7 port map (clk, valor3, numero(49 downto 41));
-Decoder4: decoder7 port map (clk, valor4, numero(49 downto 41));
 
-Decoder5: decoder7 port map (clk, valor5, numero(49 downto 41));
+numero(31 downto 24) <= "10110111"; -- Signo de igual
+
+numero(23 downto 16) <= "10111111" when (operacion < "0000") else "11111111"; -- Signo del resultado
+signo <= 0 when (operacion < "0000") else 1;
+
+numero(15 downto 8) <= "11111001" when (operacion > "1010") else "11111111"; -- Decenas del resultado
+
+
+disp8 <= operacion - "1010" when (operacion > "1010") and (signo <= 1) 
+    else operacion when (operacion < "1010") and (signo <= 1)
+    else operacion - "1010" when ((NOT(operacion) + 1) > "1010") and (signo <= 0)
+    else operacion when ((NOT(operacion) + 1) < "1010") and (signo <= 0);
     
-C0: decoderk port map (clk=>clk, Row =>JA(7 downto 4), Col=>JA(3 downto 0), DecodeOut=> Decode);
-C1: decoderk port map (clk=>clk, Row =>JA(7 downto 4), Col=>JA(3 downto 0), DecodeOut=> Decode2);
-C2: decoderk port map (clk=>clk, Row =>JA(7 downto 4), Col=>JA(3 downto 0), DecodeOut=> Decode3);
+Decoder8: decoder7 port map (clk, disp8, numero(7 downto 0));    
 
-	-- C1: DisplayController port map (DispVal=>Decode, anode=>an, segOut=>seg ); 
-
-
+C0: decoderk port map (clk=>clk, Row =>JA(7 downto 4), Col=>JA(3 downto 0), DecodeOut=> Decode, contador=> cont);
+fpga: segm7 port map (ck=>clk, Number =>numero, seg => seg7, an  =>an7);
 
 end Behavioral;
