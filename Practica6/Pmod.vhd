@@ -39,21 +39,23 @@ component segm7 is
       
 signal Decode, Decode2, Decode3, Decode4: STD_LOGIC_VECTOR (3 downto 0);
 signal suma, resta, mult: std_logic_vector(3 downto 0);
-signal operacion: std_logic_vector(3 downto 0);
+signal operacion: std_logic_vector(7 downto 0);
+signal operacion4bits: std_logic_vector(3 downto 0);
 
 signal numero: std_logic_vector(63 downto 0);
-signal disp1, disp2, disp3, disp4, disp5, disp6, disp7, disp8: std_logic_vector(3 downto 0);
+signal disp2, disp4, disp8: std_logic_vector(3 downto 0);
 signal bandera: integer:= 0;
 signal operando: integer:= 0;
 signal signo: integer:= 0;
-signal cont: std_logic_vector(3 downto 0);
+signal x: integer:= 0;
+signal cont: std_logic_vector(3 downto 0):= "0000";
 signal digito1, digito2: std_logic_vector(3 downto 0);
 
 begin
 
-Picar: process(clk, Decode)
+Picar: process(clk, Decode, cont, bandera, operando)
 begin
-case(cont) is 
+case cont is 
    when "0001" => 
         case(Decode) is
             when "1110" => bandera <= 1;
@@ -64,9 +66,9 @@ case(cont) is
         if (bandera = 0) then
             if (Decode = "1010") then
                 operando <= 1; -- suma
-            elsif (Decode = "1010") then
+            elsif (Decode = "1011") then
                 operando <= 2; -- resta
-            elsif (Decode = "1010") then
+            elsif (Decode = "1100") then
                 operando <= 3; -- multiplicacion
             end if;
         else 
@@ -79,9 +81,9 @@ case(cont) is
             else 
                if (Decode = "1010") then
                     operando <= 1; -- suma
-               elsif (Decode = "1010") then
+               elsif (Decode = "1011") then
                     operando <= 2; -- resta
-               elsif (Decode = "1010") then
+               elsif (Decode = "1100") then
                     operando <= 3; -- multiplicacion
                end if;
             end if;
@@ -90,11 +92,11 @@ case(cont) is
                    if (Decode = "1101") then
                         cont  <= "0000";
                         if (operando = 1) then 
-                            operacion <= signed(disp1)  + signed(disp3);
+                            operacion(3 downto 0) <= signed(digito1)  + signed(digito2);
                         elsif(operando = 2) then
-                            operacion <= signed(disp1) - signed(disp3);
+                            operacion(3 downto 0) <= signed(digito1) - signed(digito2);
                         elsif(operando = 3) then
-                            operacion <= signed(disp1) * signed(disp3);
+                            operacion <= signed(digito1) * signed(digito2);
                         end if; 
                   end if; 
        else
@@ -106,14 +108,16 @@ case(cont) is
             if (Decode = "1101") then
                                 cont  <= "0000";
                                 if (operando = 1) then 
-                                    operacion <= signed(disp1)  + signed(disp3);
+                                    operacion(3 downto 0) <= signed(digito1)  + signed(digito2);
                                 elsif(operando = 2) then
-                                    operacion <= signed(disp1) - signed(disp3);
+                                    operacion(3 downto 0) <= signed(digito1) - signed(digito2);
                                 elsif(operando = 3) then
-                                    operacion <= signed(disp1) * signed(disp3);
+                                    operacion <= signed(digito1) * signed(digito2);
                                 end if; 
            end if;
         end if;
+     when others => x <= 1; 
+     
 end case;
 end process;
 
@@ -128,19 +132,20 @@ numero(47 downto 40) <= "10000110" when operando <= 1 -- Suma (E)
 disp4 <= digito2;
 Decoder4: decoder7 port map (clk, disp4, numero(39 downto 32));  -- Segundo digito
 
+operacion4bits <= operacion(3 downto 0);
 
 numero(31 downto 24) <= "10110111"; -- Signo de igual
 
-numero(23 downto 16) <= "10111111" when (operacion < "0000") else "11111111"; -- Signo del resultado
-signo <= 0 when (operacion < "0000") else 1;
+numero(23 downto 16) <= "10111111" when (operacion < "00000000") else "11111111"; -- Signo del resultado
+signo <= 0 when (operacion < "00000000") else 1;
 
-numero(15 downto 8) <= "11111001" when (operacion > "1010") else "11111111"; -- Decenas del resultado
+numero(15 downto 8) <= "11111001" when (operacion > "00001010") else "11111111"; -- Decenas del resultado
 
 
-disp8 <= operacion - "1010" when (operacion > "1010") and (signo <= 1) 
-    else operacion when (operacion < "1010") and (signo <= 1)
-    else operacion - "1010" when ((NOT(operacion) + 1) > "1010") and (signo <= 0)
-    else operacion when ((NOT(operacion) + 1) < "1010") and (signo <= 0);
+disp8 <= operacion4bits - "1010" when (operacion > "00001010") and (signo <= 1) 
+    else operacion4bits when (operacion < "00001010") and (signo <= 1)
+    else operacion4bits - "1010" when ((NOT(operacion) + 1) > "00001010") and (signo <= 0)
+    else operacion4bits when ((NOT(operacion) + 1) < "00001010") and (signo <= 0);
     
 Decoder8: decoder7 port map (clk, disp8, numero(7 downto 0));    
 
