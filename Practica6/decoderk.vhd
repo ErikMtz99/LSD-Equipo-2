@@ -14,7 +14,7 @@ end decoderk;
 
 architecture Behavioral of decoderk is
 signal sclk :STD_LOGIC_VECTOR(19 downto 0);
-signal cont :STD_LOGIC_VECTOR(19 downto 0);
+signal cont :STD_LOGIC_VECTOR(3 downto 0);
 begin
 	process(clk)
 		begin 
