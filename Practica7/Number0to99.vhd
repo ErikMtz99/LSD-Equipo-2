@@ -97,7 +97,7 @@ x"0" when (CounterUni = 0 and PEs='0');
 
 QUnidades <= SalidaUnidadesBin;  
 QDecenas <= SalidaDecenasBin; 
-Test<= '1' when SalidaUnidadesBin="1001";
+Test <= '1' when SalidaUnidadesBin = "1001";
 QUnidades <= SalidaUnidadesBin;  
 QDecenas <= SalidaDecenasBin; 
 Test<= '1' when SalidaUnidadesBin="1001"; 
