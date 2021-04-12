@@ -99,6 +99,6 @@ QDecenas<=SalidaDecenasBin;
 Test<= '1' when SalidaUnidadesBin="1001"; 
 Test2<= '1' when SalidaUnidadesBin="0000"; 
 TC<='0' when ((not (CET)) and UD and Test) = '1' else 
-'0' when ((not (CET)) and not(UD) and Test2)='1' else 
+'0' when ((not (CET)) and not(UD) and Test2) = '1' else 
 '1'; 
 end Schematic;
