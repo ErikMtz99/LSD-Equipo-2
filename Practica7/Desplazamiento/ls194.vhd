@@ -1,3 +1,8 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
 entity ls194 is
 Port ( D : in STD_LOGIC_VECTOR (3 downto 0);
     DSR : in STD_LOGIC;

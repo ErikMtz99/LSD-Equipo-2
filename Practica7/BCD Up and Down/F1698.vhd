@@ -1,9 +1,14 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
 entity f1698 is
 Port ( D : in STD_LOGIC_VECTOR (7 downto 0);
     CEP : in STD_LOGIC;
     CET : in STD_LOGIC;
     PE : in STD_LOGIC;
-    CP : in STD_LOGIC;
+    CLK : in STD_LOGIC;
     UD : in STD_LOGIC;
     TC : out STD_LOGIC;
     Q1 : out STD_LOGIC_VECTOR (7 downto 0));
@@ -14,7 +19,7 @@ component f169 is
 Port ( D : in STD_LOGIC_VECTOR (3 downto 0);
     CEP : in STD_LOGIC;
     CET : in STD_LOGIC;
-    CP : in STD_LOGIC;
+    CLK : in STD_LOGIC;
     UD : in STD_LOGIC;
     PE : in STD_LOGIC;
     TC : out STD_LOGIC;
@@ -23,9 +28,9 @@ end component;
 signal S1,S2: std_logic_vector(3 downto 0);
 signal T, T1, T2, SCEP, SCET, SUD, MUX: std_logic;
 begin
-Process(CP)
+Process(CLK)
 begin
-if CP'event and CP = '1' then
+if CLK'event and CLK = '1' then
 if PE = '0' then
 S1 <= D(3 downto 0);
 S2 <= D(7 downto 4);
@@ -52,10 +57,10 @@ end if;
 end if;
 end if;
 end process;
-s1691: f169 port map(S1,CEP,CET,CP,UD,PE,T,S1);
+s1691: f169 port map(S1,CEP,CET,CLK,UD,PE,T,S1);
 s1692: f169 port map(S1,CEP,CET,T1,UD,PE,TC,S2);
 
-Process(CP)
+Process(CLK)
 begin
 if(MUX = '0') then
 case (S1) is

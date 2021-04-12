@@ -1,8 +1,13 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
 entity f169 is
 Port ( D : in STD_LOGIC_VECTOR (3 downto 0);
     CEP : in STD_LOGIC;
     CET : in STD_LOGIC;
-    CP : in STD_LOGIC;
+    CLK : in STD_LOGIC;
     UD : in STD_LOGIC;
     PE : in STD_LOGIC;
     TC : out STD_LOGIC;
@@ -12,9 +17,9 @@ end f169;
 architecture Behavioral of f169 is
 signal S: std_logic_vector(3 downto 0);
 begin
-Process(CP)
+Process(CLK)
 begin
-if CP'event and CP = '1' then
+if CLK'event and CLK = '1' then
 if PE = '0' then
 S <= D;
 Q <= D;
@@ -35,4 +40,4 @@ TC <= '1';
 end if;
 end if;
 end process;
-end Behavioral
+end Behavioral;
