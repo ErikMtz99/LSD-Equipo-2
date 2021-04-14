@@ -5,9 +5,9 @@ use IEEE.STD_LOGIC_1164;
 
 entity decoder7 is
 Port(
-        Clk: in bit;
-        N1: in bit_vector(3 downto 0);
-        S82: out bit_vector(7 downto 0)
+        Clk: in std_logic;
+        N1: in std_logic_vector(3 downto 0);
+        S82: out std_logic_vector(7 downto 0)
 );
 end decoder7;
 

@@ -44,7 +44,7 @@
 --begin
 --Process(Clk)
 --begin
----- pasa valor de 4 bits a su equivalente para display de 7 segmentos
+---- pasa valor de 4 std_logics a su equivalente para display de 7 segmentos
 --case (n2) is
 --                    when "0000" => S82 <= "11000000";
 --                    when "0001" => S82 <= "11111001";
@@ -113,20 +113,19 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use IEEE.std_logic_unsigned.all;	-- add to do arithmetic operations
 use IEEE.std_logic_arith.all;		-- add to do arithmetic operations
-use IEEE.numeric_bit.all;
 
 entity segm7 is
-    Port(ck : in bit;                          -- 100MHz system clock
-			number : in  bit_vector (63 downto 0); -- eight digit number to be displayed
-			seg : out  bit_vector (7 downto 0);    -- display cathodes
-			an : out  bit_vector (7 downto 0));    -- display anodes (active-low, due to transistor complementing)
+    Port(ck : in std_logic;                          -- 100MHz system clock
+			number : in  std_logic_vector (63 downto 0); -- eight digit number to be displayed
+			seg : out  std_logic_vector (7 downto 0);    -- display cathodes
+			an : out  std_logic_vector (7 downto 0));    -- display anodes (active-low, due to transistor complementing)
 end segm7;
 
 architecture Behavioral of segm7 is
 	signal cnt: std_logic_vector(19 downto 0); -- divider counter for ~95.3Hz refresh rate (with 100MHz main clock)
-	signal hex: bit_vector(7 downto 0);  -- hexadecimal digit
-	signal intAn: bit_vector(7 downto 0); -- internal signal representing anode data
-	signal contador: bit;
+	signal hex: std_logic_vector(7 downto 0);  -- hexadecimal digit
+	signal intAn: std_logic_vector(7 downto 0); -- internal signal representing anode data
+	signal contador: std_logic;
 begin
 
    -- Assign outputs
