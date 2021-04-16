@@ -16,7 +16,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_1164;
 
 architecture Behavioral of decoder7 is
-
 begin
 Process(Clk)
 begin
